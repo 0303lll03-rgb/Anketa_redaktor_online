@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактор анкети сервісних робіт</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header no-print">
+    <div class="brand">
+      <div class="brand-mark">LQD</div>
+      <div>
+        <p class="eyebrow">Document Editor</p>
+        <h1>Анкета виконаних сервісних робіт</h1>
+      </div>
+    </div>
+
+    <div class="toolbar" aria-label="Панель керування редактором">
+      <label class="template-select">
+        <span>Шаблон</span>
+        <select id="templateSelect" aria-label="Вибір шаблону">
+          <option>Анкета виконаних сервісних робіт</option>
+        </select>
+      </label>
+      <button type="button" class="tool-button" id="addDocumentBtn" title="Створити ще одну порожню анкету">
+        <span aria-hidden="true">＋</span>
+        Додати анкету
+      </button>
+      <button type="button" class="tool-button" id="resetBtn" title="Очистити всі введені дані">
+        <span aria-hidden="true">↺</span>
+        Очистити
+      </button>
+      <button type="button" class="tool-button primary" id="printBtn" title="Надрукувати всі створені анкети">
+        <span aria-hidden="true">⎙</span>
+        Друк
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div class="status-bar no-print">
+      <span id="saveStatus">Автозбереження увімкнено</span>
+      <span>Формат друку: A4, вертикально</span>
+    </div>
+
+    <section id="documents" class="documents" aria-label="Документи для редагування"></section>
+    <aside class="crm-panel no-print" aria-label="CRM">
+      <h2>CRM</h2>
+      <label for="crmLinkInput">Посилання замовлення</label>
+      <input type="url" id="crmLinkInput" placeholder="https://roapp.link/..." autocomplete="off">
+      <button type="button" id="importCrmBtn">Зберегти і заповнити</button>
+      <p id="crmImportStatus" class="crm-status"></p>
+      <p class="crm-help">Для CRM-імпорту відкривай сайт через open-editor.cmd. Якщо сайт уже відкритий, запусти start-crm-proxy.cmd і натисни кнопку ще раз.</p>
+    </aside>
+  </main>
+
+  <template id="documentTemplate">
+    <section class="document-set" data-doc-id="">
+      <div class="document-strip no-print">
+        <strong class="document-name">Анкета</strong>
+        <button type="button" class="strip-button" data-action="remove-document" title="Видалити цю анкету">
+          <span aria-hidden="true">×</span>
+          Видалити
+        </button>
+      </div>
+
+      <article class="sheet service-page" aria-label="Перша сторінка анкети">
+        <header class="document-header">
+          <div class="header-spacer"></div>
+          <h2>Анкета виконаних сервісних робіт</h2>
+          <div class="document-logo" aria-label="LQD WATER & HEAT">
+            <strong>LQD</strong>
+            <span>WATER &amp; HEAT</span>
+          </div>
+        </header>
+
+        <section class="info-grid" aria-label="Основна інформація">
+          <div class="info-row order-row">
+            <span class="label">Замовлення №</span>
+            <span class="editable line-field" contenteditable="true" data-field="orderNumber"></span>
+            <span class="label compact">від</span>
+            <span class="editable line-field" contenteditable="true" data-field="orderDate"></span>
+          </div>
+          <div class="info-row work-date-row">
+            <span class="label">Дата виконання робіт</span>
+            <span class="editable line-field wide" contenteditable="true" data-field="workDate"></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Виконавець</span>
+            <span class="editable line-field wide" contenteditable="true" data-field="executor"></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Замовник</span>
+            <span class="editable line-field wide" contenteditable="true" data-field="customer"></span>
+          </div>
+          <div class="info-row">
+            <span class="label">Об'єкт</span>
+            <span class="editable line-field wide" contenteditable="true" data-field="object"></span>
+          </div>
+          <div class="info-row type-row">
+            <span class="label">Вид замовлення</span>
+            <label class="check-option">
+              <input type="checkbox" data-check="planned">
+              <span>Плановий</span>
+            </label>
+            <label class="check-option">
+              <input type="checkbox" data-check="urgent">
+              <span>Аварійний</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="doc-section" data-table-section="services">
+          <div class="section-heading">
+            <h3>Послуги</h3>
+            <div class="section-actions no-print">
+              <button type="button" data-action="add-row" data-table="services">＋ Додати рядки</button>
+              <button type="button" data-action="remove-row" data-table="services">− Відняти рядки</button>
+            </div>
+          </div>
+          <table class="work-table">
+            <colgroup>
+              <col class="num-col">
+              <col class="name-col">
+              <col class="qty-col">
+              <col class="note-col">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Послуга</th>
+                <th>К-сть</th>
+                <th>Примітка</th>
+              </tr>
+            </thead>
+            <tbody data-table-body="services"></tbody>
+          </table>
+        </section>
+
+        <section class="doc-section" data-table-section="materials">
+          <div class="section-heading">
+            <h3>Матеріали</h3>
+            <div class="section-actions no-print">
+              <button type="button" data-action="add-row" data-table="materials">＋ Додати рядки</button>
+              <button type="button" data-action="remove-row" data-table="materials">− Відняти рядки</button>
+            </div>
+          </div>
+          <table class="work-table">
+            <colgroup>
+              <col class="num-col">
+              <col class="name-col">
+              <col class="qty-col">
+              <col class="note-col">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>№</th>
+                <th>Матеріал</th>
+                <th>К-сть</th>
+                <th>Примітка</th>
+              </tr>
+            </thead>
+            <tbody data-table-body="materials"></tbody>
+          </table>
+        </section>
+
+        <div class="line-blocks" data-line-blocks-target="main"></div>
+      </article>
+
+      <article class="sheet sign-page" aria-label="Друга сторінка анкети">
+        <div class="line-blocks sign-line-blocks" data-line-blocks-target="sign"></div>
+        <p class="confirmation editable" contenteditable="true" data-field="confirmationText"></p>
+        <div class="signature-block">
+          <div class="signature-row">
+            <span>Виконавець</span>
+            <span class="editable signature-line" contenteditable="true" data-field="executorSignature"></span>
+          </div>
+          <div class="signature-row">
+            <span>Замовник</span>
+            <span class="editable signature-line" contenteditable="true" data-field="customerSignature"></span>
+          </div>
+        </div>
+      </article>
+    </section>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
